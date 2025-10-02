@@ -1,4 +1,6 @@
 import crypto from "crypto";
+import { db } from ".";
+import { categoryTable, productTable, productVariantTable } from "./schema";
 
 const productImages = {
   Mochila: {
@@ -539,10 +541,10 @@ async function main() {
   try {
     // Limpar dados existentes
     console.log("🧹 Limpando dados existentes...");
-    // await db.delete(productVariantTable).execute();
-    // await db.delete(productTable).execute();
-    // await db.delete(categoryTable).execute();
-    // console.log("✅ Dados limpos com sucesso!");
+    await db.delete(productVariantTable).execute();
+    await db.delete(productTable).execute();
+    await db.delete(categoryTable).execute();
+    console.log("✅ Dados limpos com sucesso!");
 
     // Inserir categorias primeiro
     const categoryMap = new Map<string, string>();
@@ -554,11 +556,11 @@ async function main() {
 
       console.log(`  📁 Criando categoria: ${categoryData.name}`);
 
-      // await db.insert(categoryTable).values({
-      //   id: categoryId,
-      //   name: categoryData.name,
-      //   slug: categorySlug,
-      // });
+      await db.insert(categoryTable).values({
+        id: categoryId,
+        name: categoryData.name,
+        slug: categorySlug,
+      });
 
       categoryMap.set(categoryData.name, categoryId);
     }
@@ -577,13 +579,13 @@ async function main() {
 
       console.log(`📦 Criando produto: ${productData.name}`);
 
-      // await db.insert(productTable).values({
-      //   id: productId,
-      //   name: productData.name,
-      //   slug: productSlug,
-      //   description: productData.description,
-      //   categoryId: categoryId,
-      // });
+      await db.insert(productTable).values({
+        id: productId,
+        name: productData.name,
+        slug: productSlug,
+        description: productData.description,
+        categoryId: categoryId,
+      });
 
       // Inserir variantes do produto
       for (const variantData of productData.variants) {
@@ -596,15 +598,15 @@ async function main() {
 
         console.log(`  🎨 Criando variante: ${variantData.color}`);
 
-        // await db.insert(productVariantTable).values({
-        //   id: variantId,
-        //   name: variantData.color,
-        //   productId: productId,
-        //   color: variantData.color,
-        //   imageUrl: variantImages[0] || "",
-        //   priceInCents: variantData.price,
-        //   slug: generateSlug(`${productData.name}-${variantData.color}`),
-        // });
+        await db.insert(productVariantTable).values({
+          id: variantId,
+          name: variantData.color,
+          productId: productId,
+          color: variantData.color,
+          imageUrl: variantImages[0] || "",
+          priceInCents: variantData.price,
+          slug: generateSlug(`${productData.name}-${variantData.color}`),
+        });
       }
     }
 
