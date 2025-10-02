@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import Header from "./authentication/components/common/header";
 
 export default function Home() {
   return (
-    <div>
-      <Button className="my-1 px-5">Click me</Button>
-    </div>
+    <>
+      <Header />
+    </>
   );
 }
