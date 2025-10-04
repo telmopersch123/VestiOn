@@ -19,7 +19,13 @@ const Header = () => {
   return (
     <header className="flex w-full items-center justify-between border-b border-gray-300 py-4">
       <Link href="/">
-        <Image src="/logo.png" alt="VestiOn" width={100} height={100} />
+        <Image
+          className="ml-4 rounded-full"
+          src="/logo.png"
+          alt="VestiOn"
+          width={80}
+          height={80}
+        />
       </Link>
 
       <div className="flex items-center">
@@ -35,7 +41,7 @@ const Header = () => {
             </SheetHeader>
             <div className="px-5">
               {sessions?.user ? (
-                <div className="flex justify-between space-y-6">
+                <div className="flex flex-col justify-between space-y-6 sm:flex-row sm:space-y-0">
                   <div className="flex items-center gap-3">
                     <Avatar>
                       <AvatarImage
@@ -54,6 +60,7 @@ const Header = () => {
                       </span>
                     </div>
                   </div>
+
                   <Button
                     variant="outline"
                     onClick={() => authClient.signOut()}
