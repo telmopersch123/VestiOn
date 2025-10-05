@@ -11,7 +11,10 @@ import { ShoppingBasketIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
 import getCart from "@/actions/get-cart";
-import Image from "next/image";
+import { formatCentsToBRL } from "@/helpers/money";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
+import CartItem from "./cart-item";
 const Cart = () => {
   const { data: cart, isPending: cartIsLoading } = useQuery({
     queryKey: ["cart"],
@@ -29,31 +32,54 @@ const Cart = () => {
       <SheetContent>
         <SheetHeader>
           <SheetTitle className="mb-4 text-lg font-medium">Carrinho</SheetTitle>
-          <div>
-            {cartIsLoading && <p>Carregando...</p>}
-            {cart?.items.map((item) => (
-              <div key={item.id} className="mb-4 flex items-center">
-                <Image
-                  src={item.productVariant.imageUrl}
-                  alt={item.productVariant.name}
-                  width={100}
-                  height={100}
-                  className="rounded-xl"
-                />
-                <div className="ml-4">
-                  <h3 className="font-semibold">{item.productVariant.name}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {item.productVariant.product.name}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    Quantidade: {item.quantity}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    Preço: R$ {item.productVariant.priceInCents.toFixed(2)}
+
+          <div className="flex h-full flex-col px-5 pb-5">
+            <div className="h-full max-h-full flex-col overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="flex h-full flex-col gap-8">
+                  {cart?.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      id={item.id}
+                      productName={item.productVariant.product.name}
+                      productVariantName={item.productVariant.name}
+                      productVariantImageUrl={item.productVariant.imageUrl}
+                      ProductVariantTotalPriceInCents={
+                        item.productVariant.priceInCents
+                      }
+                      quantity={item.quantity}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+            {(cart?.items?.length ?? 0) > 0 && (
+              <div className="flex flex-col gap-4">
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold">Total</p>
+                  <p className="text-sm font-semibold">
+                    {formatCentsToBRL(cart?.totalPriceInCents ?? 0)}
                   </p>
                 </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold">Entrega</p>
+                  <p className="text-sm font-semibold">Grátis</p>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold">Total</p>
+                  <p className="text-sm font-semibold">
+                    {formatCentsToBRL(cart?.totalPriceInCents ?? 0)}
+                  </p>
+                </div>
+
+                <Button className="mt-5 w-full rounded-full">
+                  Finalizar compra
+                </Button>
               </div>
-            ))}
+            )}
           </div>
         </SheetHeader>
       </SheetContent>
