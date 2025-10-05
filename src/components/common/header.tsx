@@ -12,6 +12,7 @@ import { authClient } from "@/lib/auth-client";
 import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import Cart from "./cart";
 
 const Header = () => {
   const { data: sessions } = authClient.useSession();
@@ -81,6 +82,7 @@ const Header = () => {
             </div>
           </SheetContent>
         </Sheet>
+        <Cart />
       </div>
     </header>
   );

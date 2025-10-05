@@ -2,8 +2,8 @@ import { db } from "@/db";
 import { categoryTable, productTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import Header from "../../authentication/components/common/header";
-import ProductItem from "../../authentication/components/common/product-item";
+import Header from "../../../components/common/header";
+import ProductItem from "../../../components/common/product-item";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
