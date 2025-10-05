@@ -1,14 +1,14 @@
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import ProductList from "@/components/common/product-list";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import QuantitySelector from "./components/quantity-selector";
+
+import ProductActions from "./components/product-actions";
 import VariantsContainer from "./components/variants";
 
 interface ProductsVariantsPage {
@@ -31,7 +31,7 @@ const ProductsVariantsPage = async ({ params }: ProductsVariantsPage) => {
     where: eq(productTable.categoryId, productVariant.product.categoryId),
     with: { variants: true },
   });
-  console.log(productVariant);
+
   return (
     <>
       <Header />
@@ -50,7 +50,6 @@ const ProductsVariantsPage = async ({ params }: ProductsVariantsPage) => {
             selectedVariantSlug={productVariant.slug}
           />
         </div>
-
         <div className="px-5">
           <h2 className="text-lg font-semibold">
             {productVariant.product.name}
@@ -62,24 +61,12 @@ const ProductsVariantsPage = async ({ params }: ProductsVariantsPage) => {
             {formatCentsToBRL(productVariant.priceInCents)}
           </h3>
         </div>
-        <div className="px-5">
-          <QuantitySelector />
-        </div>
-
-        <div className="flex flex-col space-y-4 px-5">
-          <Button size="lg" variant="outline" className="rounded-full">
-            Adicionar ao carrinho
-          </Button>
-          <Button size="lg" className="rounded-full">
-            Comprar agora
-          </Button>
-        </div>
+        <ProductActions productVariantId={productVariant.id} />
         <div className="px-5">
           <p className="text-muted-foreground text-sm">
             {productVariant.product.description}
           </p>
         </div>
-
         <ProductList title="Talvez você goste" products={likelyProducts} />
         <Footer />
       </div>
