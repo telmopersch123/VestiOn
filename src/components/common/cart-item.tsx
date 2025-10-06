@@ -1,3 +1,5 @@
+import { addProductToCart } from "@/actions/add-cart-product";
+import { DecreaseCartProduct } from "@/actions/decrease-cart-product-quantity";
 import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/helpers/money";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +11,7 @@ import { Button } from "../ui/button";
 interface CartItemProps {
   id: string;
   productName: string;
+  productVariantId: string;
   productVariantName: string;
   productVariantImageUrl: string;
   ProductVariantTotalPriceInCents: number;
@@ -17,6 +20,7 @@ interface CartItemProps {
 const CartItem = ({
   id,
   productName,
+  productVariantId,
   productVariantName,
   productVariantImageUrl,
   ProductVariantTotalPriceInCents,
@@ -30,6 +34,26 @@ const CartItem = ({
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
+  const decreaseProductCartMutation = useMutation({
+    mutationKey: ["decrease-product-from-cart", id],
+    mutationFn: async () => DecreaseCartProduct({ cartItemId: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+  const increaseProductCartMutation = useMutation({
+    mutationKey: ["increase-product-from-cart", id],
+    mutationFn: async () => addProductToCart({ productVariantId, quantity: 1 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+  const handleIncreaseClick = () => {
+    increaseProductCartMutation.mutate(undefined, {});
+  };
+  const handleDecreaseClick = () => {
+    decreaseProductCartMutation.mutate(undefined, {});
+  };
   const handleDeleteClick = () => {
     removeProductCartMutation.mutate(undefined, {
       onSuccess: () => {
@@ -56,11 +80,23 @@ const CartItem = ({
             {productVariantName}
           </p>
           <div className="flex w-[100px] flex-row items-center justify-between rounded-lg border p-1">
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={() => {
+                handleDecreaseClick();
+              }}
+            >
               <MinusIcon />
             </Button>
             <p>{quantity}</p>
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={() => {
+                handleIncreaseClick();
+              }}
+            >
               <PlusIcon />
             </Button>
           </div>
