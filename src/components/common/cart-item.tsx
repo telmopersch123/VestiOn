@@ -1,6 +1,9 @@
+import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/helpers/money";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 
 interface CartItemProps {
@@ -19,6 +22,24 @@ const CartItem = ({
   ProductVariantTotalPriceInCents,
   quantity,
 }: CartItemProps) => {
+  const queryClient = useQueryClient();
+  const removeProductCartMutation = useMutation({
+    mutationKey: ["remove-product-from-cart", id],
+    mutationFn: async () => removeProductFromCart({ cartItemId: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+  const handleDeleteClick = () => {
+    removeProductCartMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Produto removido do carrinho.");
+      },
+      onError: () => {
+        toast.error("Erro ao remover produto do carrinho.");
+      },
+    });
+  };
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -47,9 +68,10 @@ const CartItem = ({
       </div>
       <div className="flex flex-col items-end justify-center gap-2">
         <Button
-          className="rounded-lg bg-red-500/90 px-4 py-2 font-medium text-white transition-colors hover:bg-red-600"
+          className="cursor-pointer rounded-lg bg-red-500/90 px-4 py-2 font-medium text-white transition-colors hover:bg-red-600"
           variant="outline"
           size="icon"
+          onClick={handleDeleteClick}
         >
           <Trash2Icon className="text-white" />
         </Button>

@@ -11,13 +11,14 @@ const CategorySelector = ({ categories }: CategorySelectorProps) => {
     <div className="rounded-3xl bg-[#F4EFFF] p-4">
       <div className="grid grid-cols-2 gap-3">
         {categories.map((category) => (
-          <Button
-            key={category.id}
-            variant="default"
-            className="w-full rounded-full bg-white text-xs font-semibold text-black/70"
-          >
-            <Link href={`/category/${category.slug}`}>{category.name}</Link>
-          </Button>
+          <Link key={category.id} href={`/category/${category.slug}`}>
+            <Button
+              variant="default"
+              className="w-full cursor-pointer rounded-full bg-white text-xs font-semibold text-black/70 hover:bg-pink-200"
+            >
+              {category.name}
+            </Button>
+          </Link>
         ))}
       </div>
     </div>

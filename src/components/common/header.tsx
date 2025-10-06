@@ -32,7 +32,7 @@ const Header = () => {
       <div className="flex items-center">
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" className="mr-4">
+            <Button variant="outline" className="mr-4 cursor-pointer">
               <MenuIcon />
             </Button>
           </SheetTrigger>
@@ -65,6 +65,7 @@ const Header = () => {
                   <Button
                     variant="outline"
                     onClick={() => authClient.signOut()}
+                    className="cursor-pointer"
                   >
                     <LogOutIcon />
                   </Button>
@@ -72,7 +73,7 @@ const Header = () => {
               ) : (
                 <div className="flex items-center justify-between">
                   <h2 className="font-semibold">Olá. Faça o seu Login</h2>
-                  <Button variant="outline">
+                  <Button className="cursor-pointer" variant="outline">
                     <Link href="/authentication">
                       <LogInIcon />
                     </Link>

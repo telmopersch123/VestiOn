@@ -28,7 +28,7 @@ const AddToCardButton = ({
       disabled={isPending}
       size="lg"
       variant="outline"
-      className="rounded-full"
+      className="cursor-pointer rounded-full"
       onClick={() => mutate()}
     >
       {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
