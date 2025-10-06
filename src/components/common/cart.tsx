@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 
 import { formatCentsToBRL } from "@/helpers/money";
 import { useCart } from "@/hooks/queries/use-card";
+import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import CartItem from "./cart-item";
@@ -71,9 +72,11 @@ const Cart = () => {
                 </p>
               </div>
 
-              <Button className="mt-5 w-full rounded-full">
-                Finalizar compra
-              </Button>
+              <Link href="/cart/identification" className="w-full">
+                <Button className="mt-5 w-full cursor-pointer rounded-full">
+                  Finalizar compra
+                </Button>
+              </Link>
             </div>
           )}
         </div>
