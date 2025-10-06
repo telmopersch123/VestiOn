@@ -1,8 +1,7 @@
-import { addProductToCart } from "@/actions/add-cart-product";
-import { DecreaseCartProduct } from "@/actions/decrease-cart-product-quantity";
-import { removeProductFromCart } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/helpers/money";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDecreaseProductFromCart } from "@/hooks/mutations/use-decrease-product-from-cart";
+import { useIncreaseProductFromCart } from "@/hooks/mutations/use-increase-product-from-cart";
+import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
 import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -26,28 +25,10 @@ const CartItem = ({
   ProductVariantTotalPriceInCents,
   quantity,
 }: CartItemProps) => {
-  const queryClient = useQueryClient();
-  const removeProductCartMutation = useMutation({
-    mutationKey: ["remove-product-from-cart", id],
-    mutationFn: async () => removeProductFromCart({ cartItemId: id }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
-  const decreaseProductCartMutation = useMutation({
-    mutationKey: ["decrease-product-from-cart", id],
-    mutationFn: async () => DecreaseCartProduct({ cartItemId: id }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
-  const increaseProductCartMutation = useMutation({
-    mutationKey: ["increase-product-from-cart", id],
-    mutationFn: async () => addProductToCart({ productVariantId, quantity: 1 }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
+  const removeProductCartMutation = useRemoveProductFromCart(id);
+  const decreaseProductCartMutation = useDecreaseProductFromCart(id);
+  const increaseProductCartMutation =
+    useIncreaseProductFromCart(productVariantId);
   const handleIncreaseClick = () => {
     increaseProductCartMutation.mutate(undefined, {});
   };
