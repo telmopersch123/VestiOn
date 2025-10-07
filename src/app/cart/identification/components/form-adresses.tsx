@@ -23,7 +23,7 @@ import { z } from "zod";
 
 type AddressFormData = z.infer<typeof addressSchema>;
 type AddressFormProps = {
-  onSuccess?: () => void;
+  onSuccess?: (newAddressId: string) => void;
 };
 export default function AddNewAddressForm({ onSuccess }: AddressFormProps) {
   const mutation = useCreateShippingAddress();
@@ -47,10 +47,10 @@ export default function AddNewAddressForm({ onSuccess }: AddressFormProps) {
 
   const onSubmit = (data: AddressFormData) => {
     mutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         toast.success("Endereço adicionado com sucesso!");
         form.reset();
-        onSuccess?.(); // invalida a query de endereços
+        if (res?.id && onSuccess) onSuccess(res.id); // invalida a query de endereços
       },
       onError: (err: any) => {
         toast.error(err?.message || "Erro ao salvar endereço");

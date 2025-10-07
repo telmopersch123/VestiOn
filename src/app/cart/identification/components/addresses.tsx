@@ -3,30 +3,81 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
 import { useState } from "react";
 import AddressForm from "./form-adresses";
 
-import { shippingAddressTable } from "@/db/schema";
-
+import { Button } from "@/components/ui/button";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-Update-Cart-Shipping-Address";
+import { getUseCartQueryKey } from "@/hooks/queries/use-card";
 import {
   getUserAddressesKey,
   useUserShippingAddresses,
 } from "@/hooks/queries/use-User-Shipping-Addresses";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface AddressProp {
-  shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
+  shippingAddresses: any[];
+  defaultCart: string | null;
 }
 
-const Addresses = ({ shippingAddresses }: AddressProp) => {
-  const [selectedAddres, setSelectedAddres] = useState<string | null>();
+const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
+  const [selectedAddres, setSelectedAddres] = useState<string | null>(
+    defaultCart || null,
+  );
   const { data: addresses, isLoading } = useUserShippingAddresses({
     initialData: shippingAddresses,
   });
   const queryClient = useQueryClient();
+  const updateCart = useUpdateCartShippingAddress();
 
   if (isLoading) return <p>Carregando endereços...</p>;
+
+  const handleSelectAddress = (id: string, validar: boolean) => {
+    setSelectedAddres(id);
+
+    if (id !== "add_new") {
+      updateCart.mutate(
+        { shippingAddressId: id },
+        {
+          onSuccess: () => {
+            if (!validar) {
+              toast.success("Endereço selecionado com sucesso!");
+            }
+
+            queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+          },
+          onError: (err: any) => {
+            toast.error(
+              err?.message || "Erro ao atualizar endereço do carrinho",
+            );
+          },
+        },
+      );
+    }
+  };
+
+  const handleNewAddressCreated = (newAddressId: string) => {
+    // Seleciona o novo endereço automaticamente
+    setSelectedAddres(newAddressId);
+
+    // Atualiza o carrinho com o novo endereço
+    updateCart.mutate(
+      { shippingAddressId: newAddressId },
+      {
+        onSuccess: () => {
+          toast.success("Novo endereço adicionado e selecionado!");
+          queryClient.invalidateQueries({ queryKey: getUserAddressesKey() });
+          queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+        },
+        onError: (err: any) => {
+          toast.error(
+            err?.message || "Erro ao vincular o endereço ao carrinho",
+          );
+        },
+      },
+    );
+  };
 
   return (
     <Card className="mt-2">
@@ -36,7 +87,7 @@ const Addresses = ({ shippingAddresses }: AddressProp) => {
       <CardContent className="space-y-4">
         <RadioGroup
           value={selectedAddres}
-          onValueChange={setSelectedAddres}
+          onValueChange={(value) => handleSelectAddress(value, false)}
           className="space-y-2"
         >
           {addresses?.map((address) => (
@@ -72,14 +123,21 @@ const Addresses = ({ shippingAddresses }: AddressProp) => {
           </Card>
         </RadioGroup>
 
-        {/* Formulário só aparece se selectedAddres === "add_new" */}
-        {selectedAddres === "add_new" && (
+        {selectedAddres === "add_new" ? (
           <AddressForm
-            onSuccess={() =>
-              queryClient.invalidateQueries({ queryKey: getUserAddressesKey() })
+            onSuccess={(newAddressId: string) =>
+              handleNewAddressCreated(newAddressId)
             }
           />
-        )}
+        ) : selectedAddres ? (
+          <Button
+            onClick={() => handleSelectAddress(selectedAddres, true)}
+            disabled={updateCart.isPending}
+            className="mt-2 w-full"
+          >
+            {updateCart.isPending ? "Atualizando..." : "Ir para pagamento"}
+          </Button>
+        ) : null}
       </CardContent>
     </Card>
   );
