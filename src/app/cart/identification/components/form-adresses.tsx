@@ -22,8 +22,10 @@ import { useCreateShippingAddress } from "@/hooks/mutations/use-Create-Shipping-
 import { z } from "zod";
 
 type AddressFormData = z.infer<typeof addressSchema>;
-
-export default function AddNewAddressForm() {
+type AddressFormProps = {
+  onSuccess?: () => void;
+};
+export default function AddNewAddressForm({ onSuccess }: AddressFormProps) {
   const mutation = useCreateShippingAddress();
   const isLoading = mutation.isPending;
   const form = useForm<AddressFormData>({
@@ -48,6 +50,7 @@ export default function AddNewAddressForm() {
       onSuccess: () => {
         toast.success("Endereço adicionado com sucesso!");
         form.reset();
+        onSuccess?.(); // invalida a query de endereços
       },
       onError: (err: any) => {
         toast.error(err?.message || "Erro ao salvar endereço");
@@ -69,7 +72,7 @@ export default function AddNewAddressForm() {
             <FormItem>
               <FormLabel>E-mail</FormLabel>
               <FormControl>
-                <Input placeholder="seu@email.com" {...field} />
+                <Input placeholder="Seu e-mail" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,6 +103,7 @@ export default function AddNewAddressForm() {
               <FormLabel>CPF</FormLabel>
               <FormControl>
                 <PatternFormat
+                  placeholder="###.###.###-##"
                   format="###.###.###-##"
                   mask="_"
                   customInput={Input}
@@ -120,6 +124,7 @@ export default function AddNewAddressForm() {
               <FormLabel>Celular</FormLabel>
               <FormControl>
                 <PatternFormat
+                  placeholder="(##) #####-####"
                   format="(##) #####-####"
                   mask="_"
                   customInput={Input}
@@ -140,6 +145,7 @@ export default function AddNewAddressForm() {
               <FormLabel>CEP</FormLabel>
               <FormControl>
                 <PatternFormat
+                  placeholder="#####-###"
                   format="#####-###"
                   mask="_"
                   customInput={Input}
@@ -159,7 +165,7 @@ export default function AddNewAddressForm() {
             <FormItem>
               <FormLabel>Endereço</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Endereço" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -175,7 +181,7 @@ export default function AddNewAddressForm() {
               <FormItem className="flex-1">
                 <FormLabel>Número</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Número" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -188,7 +194,7 @@ export default function AddNewAddressForm() {
               <FormItem className="flex-1">
                 <FormLabel>Complemento</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Complemento" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -204,7 +210,7 @@ export default function AddNewAddressForm() {
             <FormItem>
               <FormLabel>Bairro</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Bairro" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -220,7 +226,7 @@ export default function AddNewAddressForm() {
               <FormItem className="flex-1">
                 <FormLabel>Cidade</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Cidade" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -233,7 +239,7 @@ export default function AddNewAddressForm() {
               <FormItem className="flex-1">
                 <FormLabel>Estado</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Estado" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

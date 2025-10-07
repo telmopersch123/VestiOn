@@ -1,4 +1,5 @@
 "use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -6,17 +7,54 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 import AddressForm from "./form-adresses";
 
+import {
+  getUserAddressesKey,
+  useUserShippingAddresses,
+} from "@/hooks/mutations/use-User-Shipping-Addresses";
+import { useQueryClient } from "@tanstack/react-query";
+
 const Addresses = () => {
   const [selectedAddres, setSelectedAddres] = useState<string | null>();
+  const { data: addresses, isLoading } = useUserShippingAddresses();
+  const queryClient = useQueryClient();
+
+  if (isLoading) return <p>Carregando endereços...</p>;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Identificação</CardTitle>
       </CardHeader>
-      <CardContent>
-        <RadioGroup value={selectedAddres} onValueChange={setSelectedAddres}>
-          <Card>
+      <CardContent className="space-y-4">
+        <RadioGroup
+          value={selectedAddres}
+          onValueChange={setSelectedAddres}
+          className="space-y-2"
+        >
+          {addresses?.map((address) => (
+            <Card key={address.id} className="border border-gray-200">
+              <CardContent>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={address.id} id={address.id} />
+                  <div>
+                    <Label htmlFor={address.id} className="font-semibold">
+                      {address.recipientName}
+                    </Label>
+                    <p className="text-sm text-gray-600">
+                      {address.street}, {address.number}{" "}
+                      {address.complement && `- ${address.complement}`} <br />
+                      {address.neighborhood}, {address.city} - {address.state}{" "}
+                      <br />
+                      CEP: {address.zipCode} | {address.phone}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* Adicionar novo endereço */}
+          <Card className="border border-gray-200">
             <CardContent>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="add_new" id="add_new" />
@@ -25,7 +63,15 @@ const Addresses = () => {
             </CardContent>
           </Card>
         </RadioGroup>
-        {selectedAddres === "add_new" && <AddressForm />}
+
+        {/* Formulário só aparece se selectedAddres === "add_new" */}
+        {selectedAddres === "add_new" && (
+          <AddressForm
+            onSuccess={() =>
+              queryClient.invalidateQueries({ queryKey: getUserAddressesKey() })
+            }
+          />
+        )}
       </CardContent>
     </Card>
   );
