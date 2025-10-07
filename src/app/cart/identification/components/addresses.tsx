@@ -135,7 +135,9 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
             disabled={updateCart.isPending}
             className="mt-2 w-full"
           >
-            {updateCart.isPending ? "Atualizando..." : "Ir para pagamento"}
+            {updateCart.isPending
+              ? "Atualizando..."
+              : "Continuar com o pagamento"}
           </Button>
         ) : null}
       </CardContent>

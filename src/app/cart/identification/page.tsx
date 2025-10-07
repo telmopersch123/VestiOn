@@ -5,8 +5,10 @@ import { auth } from "@/lib/auth";
 
 import { eq } from "drizzle-orm";
 
+import Footer from "@/components/common/footer";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import CartSummary from "../components/cart-summary";
 import Addresses from "./components/addresses";
 
 const IdentificationPage = async () => {
@@ -38,16 +40,33 @@ const IdentificationPage = async () => {
   const shippingAddresses = await db.query.shippingAddressTable.findMany({
     where: eq(shippingAddressTable.userId, session.user.id),
   });
+  const cartTotalPriceInCents = cart.items.reduce(
+    (total, item) => total + item.productVariant.priceInCents * item.quantity,
+    0,
+  );
   return (
-    <>
+    <div className="space-y-12">
       <Header />
-      <div className="px-5">
+      <div className="space-y-4 px-5">
         <Addresses
           shippingAddresses={shippingAddresses}
           defaultCart={cart.shippingAddress?.id || null}
         />
+        <CartSummary
+          subTotalInCents={cartTotalPriceInCents}
+          totalInCents={cartTotalPriceInCents}
+          products={cart.items.map((item) => ({
+            id: item.productVariant.id,
+            productName: item.productVariant.name,
+            variantName: item.productVariant.name,
+            quantity: item.quantity,
+            priceInCents: item.productVariant.priceInCents,
+            imageUrl: item.productVariant.imageUrl,
+          }))}
+        />
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 
