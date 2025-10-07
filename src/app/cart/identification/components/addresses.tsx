@@ -7,21 +7,29 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 import AddressForm from "./form-adresses";
 
+import { shippingAddressTable } from "@/db/schema";
+
 import {
   getUserAddressesKey,
   useUserShippingAddresses,
-} from "@/hooks/mutations/use-User-Shipping-Addresses";
+} from "@/hooks/queries/use-User-Shipping-Addresses";
 import { useQueryClient } from "@tanstack/react-query";
 
-const Addresses = () => {
+interface AddressProp {
+  shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
+}
+
+const Addresses = ({ shippingAddresses }: AddressProp) => {
   const [selectedAddres, setSelectedAddres] = useState<string | null>();
-  const { data: addresses, isLoading } = useUserShippingAddresses();
+  const { data: addresses, isLoading } = useUserShippingAddresses({
+    initialData: shippingAddresses,
+  });
   const queryClient = useQueryClient();
 
   if (isLoading) return <p>Carregando endereços...</p>;
 
   return (
-    <Card>
+    <Card className="mt-2">
       <CardHeader>
         <CardTitle>Identificação</CardTitle>
       </CardHeader>
