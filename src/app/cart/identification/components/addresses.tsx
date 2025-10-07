@@ -25,8 +25,7 @@ const Addresses = () => {
             </CardContent>
           </Card>
         </RadioGroup>
-
-        <AddressForm selectedAddress={selectedAddres || ""} />
+        {selectedAddres === "add_new" && <AddressForm />}
       </CardContent>
     </Card>
   );

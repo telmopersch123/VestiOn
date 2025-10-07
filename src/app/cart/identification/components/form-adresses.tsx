@@ -1,197 +1,250 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
-import { z } from "zod";
+import { toast } from "sonner";
 
-const addressSchema = z.object({
-  email: z.string().email("E-mail inválido"),
-  fullName: z.string().min(3, "Nome muito curto"),
-  cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
-  phone: z.string().min(14, "Celular inválido (use DDD + número)"),
-  cep: z.string().min(9, "CEP inválido (use formato 00000-000)"),
-  address: z.string().min(3, "Endereço obrigatório"),
-  number: z.string().min(1, "Número obrigatório"),
-  complement: z.string().optional(),
-  neighborhood: z.string().min(2, "Bairro obrigatório"),
-  city: z.string().min(2, "Cidade obrigatória"),
-  state: z.string().min(2, "Estado obrigatório"),
-});
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+import { addressSchema } from "@/actions/address-cart/schema";
+import { useCreateShippingAddress } from "@/hooks/mutations/use-Create-Shipping-Address";
+
+import { z } from "zod";
 
 type AddressFormData = z.infer<typeof addressSchema>;
 
-interface AddNewAddressFormProps {
-  selectedAddress: string;
-}
-
-export default function AddNewAddressForm({
-  selectedAddress,
-}: AddNewAddressFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<AddressFormData>({
+export default function AddNewAddressForm() {
+  const mutation = useCreateShippingAddress();
+  const isLoading = mutation.isPending;
+  const form = useForm<AddressFormData>({
     resolver: zodResolver(addressSchema),
+    defaultValues: {
+      email: "",
+      fullName: "",
+      cpfOrCnpj: "",
+      phone: "",
+      zipCode: "",
+      street: "",
+      number: "",
+      complement: "",
+      neighborhood: "",
+      city: "",
+      state: "",
+    },
   });
 
-  if (selectedAddress !== "add_new") return null;
-
   const onSubmit = (data: AddressFormData) => {
-    console.log("Novo endereço adicionado:", data);
+    mutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("Endereço adicionado com sucesso!");
+        form.reset();
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || "Erro ao salvar endereço");
+      },
+    });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl bg-white p-6 shadow-lg"
-    >
-      {/* Linha 1 */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="email">E-mail</Label>
-          <Input
-            id="email"
-            {...register("email")}
-            placeholder="seuemail@exemplo.com"
-          />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto mt-2 max-w-lg space-y-5 rounded-2xl bg-white p-6 shadow-sm"
+      >
+        {/* Email */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>E-mail</FormLabel>
+              <FormControl>
+                <Input placeholder="seu@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="fullName">Nome completo</Label>
-          <Input
-            id="fullName"
-            {...register("fullName")}
-            placeholder="Digite seu nome completo"
-          />
-          {errors.fullName && (
-            <p className="text-sm text-red-500">{errors.fullName.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Linha 2 */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="cpf">CPF</Label>
-          <PatternFormat
-            id="cpf"
-            format="###.###.###-##"
-            customInput={Input}
-            placeholder="000.000.000-00"
-            onValueChange={(values) => setValue("cpf", values.value)}
-          />
-          {errors.cpf && (
-            <p className="text-sm text-red-500">{errors.cpf.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="phone">Celular</Label>
-          <PatternFormat
-            id="phone"
-            format="(##) #####-####"
-            customInput={Input}
-            placeholder="(00) 00000-0000"
-            onValueChange={(values) => setValue("phone", values.formattedValue)}
-          />
-          {errors.phone && (
-            <p className="text-sm text-red-500">{errors.phone.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="cep">CEP</Label>
-          <PatternFormat
-            id="cep"
-            format="#####-###"
-            customInput={Input}
-            placeholder="00000-000"
-            onValueChange={(values) => setValue("cep", values.formattedValue)}
-          />
-          {errors.cep && (
-            <p className="text-sm text-red-500">{errors.cep.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Linha 3 */}
-      <div className="flex flex-col space-y-2">
-        <Label htmlFor="address">Endereço</Label>
-        <Input
-          id="address"
-          {...register("address")}
-          placeholder="Rua, avenida, etc."
         />
-        {errors.address && (
-          <p className="text-sm text-red-500">{errors.address.message}</p>
-        )}
-      </div>
 
-      {/* Linha 4 */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="number">Número</Label>
-          <Input id="number" {...register("number")} placeholder="123" />
-          {errors.number && (
-            <p className="text-sm text-red-500">{errors.number.message}</p>
+        {/* Nome completo */}
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nome completo</FormLabel>
+              <FormControl>
+                <Input placeholder="Seu nome" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
 
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="complement">Complemento</Label>
-          <Input
-            id="complement"
-            {...register("complement")}
-            placeholder="Apto, bloco, etc. (opcional)"
+        {/* CPF */}
+        <FormField
+          control={form.control}
+          name="cpfOrCnpj"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>CPF</FormLabel>
+              <FormControl>
+                <PatternFormat
+                  format="###.###.###-##"
+                  mask="_"
+                  customInput={Input}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Celular */}
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Celular</FormLabel>
+              <FormControl>
+                <PatternFormat
+                  format="(##) #####-####"
+                  mask="_"
+                  customInput={Input}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* CEP */}
+        <FormField
+          control={form.control}
+          name="zipCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>CEP</FormLabel>
+              <FormControl>
+                <PatternFormat
+                  format="#####-###"
+                  mask="_"
+                  customInput={Input}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Endereço */}
+        <FormField
+          control={form.control}
+          name="street"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Endereço</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Número e Complemento */}
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="number"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Número</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="complement"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Complemento</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="neighborhood">Bairro</Label>
-          <Input
-            id="neighborhood"
-            {...register("neighborhood")}
-            placeholder="Centro"
+        {/* Bairro */}
+        <FormField
+          control={form.control}
+          name="neighborhood"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bairro</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Cidade e Estado */}
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Cidade</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.neighborhood && (
-            <p className="text-sm text-red-500">
-              {errors.neighborhood.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Linha 5 */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="city">Cidade</Label>
-          <Input id="city" {...register("city")} placeholder="Ex: São Paulo" />
-          {errors.city && (
-            <p className="text-sm text-red-500">{errors.city.message}</p>
-          )}
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Estado</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <Label htmlFor="state">Estado</Label>
-          <Input id="state" {...register("state")} placeholder="Ex: SP" />
-          {errors.state && (
-            <p className="text-sm text-red-500">{errors.state.message}</p>
-          )}
-        </div>
-      </div>
-
-      <Button type="submit" className="mt-4 w-full md:w-auto">
-        Salvar endereço
-      </Button>
-    </form>
+        <Button type="submit" disabled={isLoading} className="mt-2 w-full">
+          {isLoading ? "Salvando..." : "Salvar endereço"}
+        </Button>
+      </form>
+    </Form>
   );
 }
