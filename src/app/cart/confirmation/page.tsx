@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import CartSummary from "../components/cart-summary";
 import { formatAddress } from "../helpers/addresses";
-import FinishOrderButton from "./components/finish-order-button";
+import { FinishOrderButton } from "./components/finish-order-button";
 
 const ConfirmationPage = async () => {
   const session = await auth.api.getSession({

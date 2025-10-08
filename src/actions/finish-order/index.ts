@@ -41,21 +41,33 @@ export const finishOrder = async () => {
   const totalPriceInCents = cart.items.reduce((total, item) => {
     return total + item.productVariant.priceInCents * item.quantity;
   }, 0);
-
+  let orderId: string | undefined;
   await db.transaction(async (tx) => {
-    const [order] = await db
+    const [order] = await tx
       .insert(orderTable)
       .values({
-        ...cart.shippingAddress!,
         userId: session.user.id,
-        totalPriceInCents,
         shippingAddressId: cart.shippingAddress!.id,
+        recipientName: cart.shippingAddress!.recipientName,
+        street: cart.shippingAddress!.street,
+        number: cart.shippingAddress!.number,
+        complement: cart.shippingAddress!.complement,
+        city: cart.shippingAddress!.city,
+        state: cart.shippingAddress!.state,
+        neighborhood: cart.shippingAddress!.neighborhood,
+        zipCode: cart.shippingAddress!.zipCode,
+        country: cart.shippingAddress!.country,
+        phone: cart.shippingAddress!.phone,
+        email: cart.shippingAddress!.email,
+        cpfOrCnpj: cart.shippingAddress!.cpfOrCnpj,
+        totalPriceInCents,
       })
       .returning();
 
     if (!order) {
       throw new Error("Erro ao criar pedido");
     }
+    orderId = order.id;
     const orderItemsPayload: Array<typeof orderItemTable.$inferInsert> =
       cart.items.map((item) => ({
         orderId: order.id,
@@ -64,7 +76,8 @@ export const finishOrder = async () => {
         priceInCents: item.productVariant.priceInCents,
       }));
     await tx.insert(orderItemTable).values(orderItemsPayload);
-
+    await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
     await tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id));
   });
+  return { orderId };
 };

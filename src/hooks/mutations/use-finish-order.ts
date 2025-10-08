@@ -10,7 +10,7 @@ export function useFinishOrder() {
   return useMutation({
     mutationKey: getFinishOrdersMutationKey(),
     mutationFn: async () => {
-      await finishOrder();
+      return await finishOrder();
     },
     onSuccess: () => {
       // Invalida queries relacionadas ao carrinho, se houver

@@ -46,10 +46,11 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
           onSuccess: () => {
             if (!validar) {
               toast.success("Endereço selecionado com sucesso!");
+            } else {
+              router.push("/cart/confirmation");
             }
 
             queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
-            router.push("/cart/confirmation");
           },
           onError: (err: any) => {
             toast.error(
@@ -133,7 +134,7 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
           <Button
             onClick={() => handleSelectAddress(selectedAddres, true)}
             disabled={updateCart.isPending}
-            className="mt-2 w-full"
+            className="mt-2 w-full cursor-pointer rounded-full"
           >
             {updateCart.isPending ? (
               <>
