@@ -14,7 +14,11 @@ import {
   useUserShippingAddresses,
 } from "@/hooks/queries/use-User-Shipping-Addresses";
 import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { formatAddress } from "../../helpers/addresses";
 
 interface AddressProp {
   shippingAddresses: any[];
@@ -22,16 +26,15 @@ interface AddressProp {
 }
 
 const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
+  const router = useRouter();
   const [selectedAddres, setSelectedAddres] = useState<string | null>(
     defaultCart || null,
   );
-  const { data: addresses, isLoading } = useUserShippingAddresses({
+  const { data: addresses } = useUserShippingAddresses({
     initialData: shippingAddresses,
   });
   const queryClient = useQueryClient();
   const updateCart = useUpdateCartShippingAddress();
-
-  if (isLoading) return <p>Carregando endereços...</p>;
 
   const handleSelectAddress = (id: string, validar: boolean) => {
     setSelectedAddres(id);
@@ -46,6 +49,7 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
             }
 
             queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+            router.push("/cart/confirmation");
           },
           onError: (err: any) => {
             toast.error(
@@ -66,7 +70,7 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
       { shippingAddressId: newAddressId },
       {
         onSuccess: () => {
-          toast.success("Novo endereço adicionado e selecionado!");
+          toast.success("Novo endereço adicionado com sucesso!");
           queryClient.invalidateQueries({ queryKey: getUserAddressesKey() });
           queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
         },
@@ -100,11 +104,7 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
                       {address.recipientName}
                     </Label>
                     <p className="text-sm text-gray-600">
-                      {address.street}, {address.number}{" "}
-                      {address.complement && `- ${address.complement}`} <br />
-                      {address.neighborhood}, {address.city} - {address.state}{" "}
-                      <br />
-                      CEP: {address.zipCode} | {address.phone}
+                      {formatAddress(address)}
                     </p>
                   </div>
                 </div>
@@ -135,9 +135,14 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
             disabled={updateCart.isPending}
             className="mt-2 w-full"
           >
-            {updateCart.isPending
-              ? "Atualizando..."
-              : "Continuar com o pagamento"}
+            {updateCart.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Atualizando...
+              </>
+            ) : (
+              "Continuar com o pagamento"
+            )}
           </Button>
         ) : null}
       </CardContent>
