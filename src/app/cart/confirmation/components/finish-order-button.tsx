@@ -1,22 +1,12 @@
 "use client";
 import { createCheckoutSessions } from "@/actions/create-checkout-session";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
 export const FinishOrderButton = () => {
-  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
   const finishOrderMutation = useFinishOrder();
 
   const handleFinishOrder = async () => {
@@ -37,7 +27,6 @@ export const FinishOrderButton = () => {
         throw new Error("Stripe is undefined");
       }
       await stripe.redirectToCheckout({ sessionId });
-      setSuccessDialogIsOpen(true);
     } catch (error) {
       console.error("Erro ao finalizar pedido:", error);
     }
@@ -57,43 +46,6 @@ export const FinishOrderButton = () => {
         )}
         Finalizar Compra
       </Button>
-      <Dialog open={successDialogIsOpen} onOpenChange={setSuccessDialogIsOpen}>
-        <DialogContent className="text-center">
-          <Image
-            src="/illustration.svg"
-            alt="Success IMG"
-            height={300}
-            width={300}
-            className="mx-auto"
-          />
-
-          <DialogTitle className="mt-4 text-2xl">
-            Compra realizada com sucesso!
-          </DialogTitle>
-          <DialogDescription>
-            Seu pedido foi efetuado com sucesso. Você pode acompanhar o status
-            na seção de "Meus Pedidos".
-          </DialogDescription>
-          <DialogFooter>
-            <Button
-              onClick={() => setSuccessDialogIsOpen(false)}
-              className="cursor-pointer rounded-full"
-              size="lg"
-            >
-              Ver meus pedidos
-            </Button>
-            <Button
-              onClick={() => setSuccessDialogIsOpen(false)}
-              className="cursor-pointer rounded-full"
-              variant="outline"
-              size="lg"
-              asChild
-            >
-              <Link href="/"> Voltar para a loja</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

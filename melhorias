@@ -1,2 +1,7 @@
 - Ao selecionar o endereço, devemos ao clicar na div inteira, e ja selecionar, sem precisar necessariamente clicar no radio.
 - mudar icone do site
+
+- Não limpar o carrinho quando der falha, so limpar quando eu finalizar a compra com sucesso!
+
+- Melhorar a interface do meus pedidos
+- e fazer a parte responsiva para desktop
