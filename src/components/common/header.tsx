@@ -1,5 +1,4 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,23 +8,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { authClient } from "@/lib/auth-client";
-import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import MenuBar from "../menu/MenuBar";
 import Cart from "./cart";
 
 const Header = () => {
-  const { data: sessions } = authClient.useSession();
-
+  const session = authClient.useSession().data;
   return (
-    <header className="flex w-full items-center justify-between border-b border-gray-300 py-4">
+    <header className="mb-4 flex h-20 w-full items-center justify-between">
       <Link href="/">
         <Image
-          className="ml-4 rounded-full"
-          src="/logo.png"
+          className="ml-5 rounded-full"
+          src="/logo.svg"
           alt="VestiOn"
-          width={80}
-          height={80}
+          width={120}
+          height={120}
         />
       </Link>
 
@@ -40,50 +39,10 @@ const Header = () => {
             <SheetHeader>
               <SheetTitle className="mb-4 text-lg font-medium">Menu</SheetTitle>
             </SheetHeader>
-            <div className="px-5">
-              {sessions?.user ? (
-                <div className="flex flex-col justify-between space-y-6 sm:flex-row sm:space-y-0">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage
-                        src={sessions.user.image || undefined}
-                        alt="User Avatar"
-                      />
-                      <AvatarFallback>
-                        {sessions.user.name?.split("")?.[0]?.[0]}
-                        {sessions.user.name?.split("")?.[1]?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold">{sessions?.user?.name}</h3>
-                      <span className="text-muted-foreground block text-sm">
-                        {sessions?.user?.email}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={() => authClient.signOut()}
-                    className="cursor-pointer"
-                  >
-                    <LogOutIcon />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <h2 className="font-semibold">Olá. Faça o seu Login</h2>
-                  <Button className="cursor-pointer" variant="outline">
-                    <Link href="/authentication">
-                      <LogInIcon />
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </div>
+            <MenuBar />
           </SheetContent>
         </Sheet>
-        <Cart />
+        {session?.user && <Cart />}
       </div>
     </header>
   );

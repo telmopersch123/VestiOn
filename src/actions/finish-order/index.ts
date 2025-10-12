@@ -1,12 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import {
-  cartItemTable,
-  cartTable,
-  orderItemTable,
-  orderTable,
-} from "@/db/schema";
+import { cartTable, orderItemTable, orderTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -76,8 +71,6 @@ export const finishOrder = async () => {
         priceInCents: item.productVariant.priceInCents,
       }));
     await tx.insert(orderItemTable).values(orderItemsPayload);
-    await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
-    await tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id));
   });
   return { orderId };
 };

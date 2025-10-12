@@ -1,3 +1,4 @@
+import ClientLoaderWrapper from "@/components/common/ClientLoaderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import ReactQueryProvider from "@/providers/react-query";
 import type { Metadata } from "next";
@@ -30,8 +31,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReactQueryProvider>{children}</ReactQueryProvider>
-        <Toaster position="top-center" />
+        <ReactQueryProvider>
+          <ClientLoaderWrapper>{children}</ClientLoaderWrapper>
+          <Toaster position="top-center" />
+        </ReactQueryProvider>
       </body>
     </html>
   );

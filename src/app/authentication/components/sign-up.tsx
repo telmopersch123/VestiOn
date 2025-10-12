@@ -19,7 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -55,6 +57,7 @@ const formSchema = z
   );
 
 const SignUpForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -65,25 +68,30 @@ const SignUpForm = () => {
   });
 
   async function onSubmit(values: FormValues) {
-    const { data, error } = await authClient.signUp.email({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/");
+    setIsLoading(true);
+    try {
+      const { data, error } = await authClient.signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (error) => {
+            if (error.error.code === "USER_ALREADY_EXISTS") {
+              toast.error("Email ou senha inválidos.");
+              return form.setError("email", {
+                type: "manual",
+                message: "Email ou senha inválidos.",
+              });
+            }
+          },
         },
-        onError: (error) => {
-          if (error.error.code === "USER_ALREADY_EXISTS") {
-            toast.error("Email ou senha inválidos.");
-            return form.setError("email", {
-              type: "manual",
-              message: "Email ou senha inválidos.",
-            });
-          }
-        },
-      },
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <>
@@ -161,7 +169,15 @@ const SignUpForm = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit">Criar conta</Button>
+              <Button
+                disabled={isLoading}
+                className="w-full cursor-pointer"
+                type="submit"
+              >
+                {" "}
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Criar conta
+              </Button>
             </CardFooter>
           </form>
         </Form>

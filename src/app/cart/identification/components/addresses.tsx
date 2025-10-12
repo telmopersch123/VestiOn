@@ -21,15 +21,19 @@ import { toast } from "sonner";
 import { formatAddress } from "../../helpers/addresses";
 
 interface AddressProp {
+  quantity: number | undefined;
+  productVariantId: string | undefined;
   shippingAddresses: any[];
-  defaultCart: string | null;
 }
 
-const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
+const Addresses = ({
+  quantity,
+  productVariantId,
+  shippingAddresses,
+}: AddressProp) => {
   const router = useRouter();
-  const [selectedAddres, setSelectedAddres] = useState<string | null>(
-    defaultCart || null,
-  );
+  const [selectedAddres, setSelectedAddres] = useState<string | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
   const { data: addresses } = useUserShippingAddresses({
     initialData: shippingAddresses,
   });
@@ -47,7 +51,14 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
             if (!validar) {
               toast.success("Endereço selecionado com sucesso!");
             } else {
-              router.push("/cart/confirmation");
+              setIsNavigating(true);
+              if (quantity && productVariantId) {
+                router.push(
+                  `/cart/confirmation?productVariantId=${productVariantId}&quantity=${quantity}`,
+                );
+              } else {
+                router.push("/cart/confirmation");
+              }
             }
 
             queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
@@ -84,70 +95,81 @@ const Addresses = ({ shippingAddresses, defaultCart }: AddressProp) => {
     );
   };
 
+  const isLoading = updateCart.isPending || isNavigating;
+
   return (
-    <Card className="mt-2">
-      <CardHeader>
-        <CardTitle>Identificação</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <RadioGroup
-          value={selectedAddres}
-          onValueChange={(value) => handleSelectAddress(value, false)}
-          className="space-y-2"
-        >
-          {addresses?.map((address) => (
-            <Card key={address.id} className="border border-gray-200">
+    <>
+      <Card className="mt-2">
+        <CardHeader>
+          <CardTitle>Identificação</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <RadioGroup
+            value={selectedAddres}
+            onValueChange={(value) => handleSelectAddress(value, false)}
+            className="space-y-2"
+          >
+            {addresses?.map((address) => (
+              <Card
+                key={address.id}
+                onClick={() => handleSelectAddress(address.id, false)}
+                className="border border-gray-200"
+              >
+                <CardContent>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value={address.id} id={address.id} />
+                    <div>
+                      <Label htmlFor={address.id} className="font-semibold">
+                        {address.recipientName}
+                      </Label>
+                      <p className="text-sm text-gray-600">
+                        {formatAddress(address)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Adicionar novo endereço */}
+            <Card
+              onClick={() => handleSelectAddress("add_new", false)}
+              className="border border-gray-200"
+            >
               <CardContent>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={address.id} id={address.id} />
-                  <div>
-                    <Label htmlFor={address.id} className="font-semibold">
-                      {address.recipientName}
-                    </Label>
-                    <p className="text-sm text-gray-600">
-                      {formatAddress(address)}
-                    </p>
-                  </div>
+                  <RadioGroupItem value="add_new" id="add_new" />
+                  <Label htmlFor="add_new">Adicionar novo endereço</Label>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          </RadioGroup>
 
-          {/* Adicionar novo endereço */}
-          <Card className="border border-gray-200">
-            <CardContent>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="add_new" id="add_new" />
-                <Label htmlFor="add_new">Adicionar novo endereço</Label>
-              </div>
-            </CardContent>
-          </Card>
-        </RadioGroup>
-
-        {selectedAddres === "add_new" ? (
-          <AddressForm
-            onSuccess={(newAddressId: string) =>
-              handleNewAddressCreated(newAddressId)
-            }
-          />
-        ) : selectedAddres ? (
-          <Button
-            onClick={() => handleSelectAddress(selectedAddres, true)}
-            disabled={updateCart.isPending}
-            className="mt-2 w-full cursor-pointer rounded-full"
-          >
-            {updateCart.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Atualizando...
-              </>
-            ) : (
-              "Continuar com o pagamento"
-            )}
-          </Button>
-        ) : null}
-      </CardContent>
-    </Card>
+          {selectedAddres === "add_new" ? (
+            <AddressForm
+              onSuccess={(newAddressId: string) =>
+                handleNewAddressCreated(newAddressId)
+              }
+            />
+          ) : selectedAddres ? (
+            <Button
+              onClick={() => handleSelectAddress(selectedAddres, true)}
+              disabled={isLoading}
+              className="mt-2 w-full cursor-pointer rounded-full"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Continuar com o pagamento
+                </>
+              ) : (
+                "Continuar com o pagamento"
+              )}
+            </Button>
+          ) : null}
+        </CardContent>
+      </Card>
+    </>
   );
 };
 

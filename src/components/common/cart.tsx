@@ -6,17 +6,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingBasketIcon } from "lucide-react";
+import { Loader2, ShoppingBasketIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { formatCentsToBRL } from "@/helpers/money";
 import { useCart } from "@/hooks/queries/use-card";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import CartItem from "./cart-item";
 const Cart = () => {
   const { data: cart } = useCart();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const handleContinue = () => {
+    startTransition(() => router.push("/cart/identification"));
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -26,27 +32,33 @@ const Cart = () => {
       </SheetTrigger>
       <SheetContent className="flex h-full flex-col">
         <SheetHeader>
-          <SheetTitle className="mb-4 text-lg font-medium">Carrinho</SheetTitle>
+          <SheetTitle className="mb-4 text-lg font-medium">Sacola</SheetTitle>
         </SheetHeader>
 
         <div className="flex h-full flex-col px-5 pb-5">
           <div className="h-full max-h-full flex-col overflow-hidden">
             <ScrollArea className="h-full">
               <div className="flex h-full flex-col gap-8">
-                {cart?.items.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    id={item.id}
-                    productName={item.productVariant.product.name}
-                    productVariantId={item.productVariant.id}
-                    productVariantName={item.productVariant.name}
-                    productVariantImageUrl={item.productVariant.imageUrl}
-                    ProductVariantTotalPriceInCents={
-                      item.productVariant.priceInCents
-                    }
-                    quantity={item.quantity}
-                  />
-                ))}
+                {cart?.items && cart?.items?.length > 0 ? (
+                  cart.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      id={item.id}
+                      productName={item.productVariant.product.name}
+                      productVariantId={item.productVariant.id}
+                      productVariantName={item.productVariant.name}
+                      productVariantImageUrl={item.productVariant.imageUrl}
+                      ProductVariantTotalPriceInCents={
+                        item.productVariant.priceInCents
+                      }
+                      quantity={item.quantity}
+                    />
+                  ))
+                ) : (
+                  <div className="text-muted-foreground absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center font-semibold">
+                    Seu sacola está vazia
+                  </div>
+                )}
               </div>
             </ScrollArea>
           </div>
@@ -72,11 +84,20 @@ const Cart = () => {
                 </p>
               </div>
 
-              <Link href="/cart/identification" className="w-full">
-                <Button className="mt-5 w-full cursor-pointer rounded-full">
-                  Finalizar compra
-                </Button>
-              </Link>
+              <Button
+                onClick={handleContinue}
+                disabled={isPending}
+                className="mt-5 w-full cursor-pointer rounded-full"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Continuar compra
+                  </>
+                ) : (
+                  "Continuar compra"
+                )}
+              </Button>
             </div>
           )}
         </div>

@@ -19,10 +19,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { GoogleIcon } from "./googleicon";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -37,6 +40,7 @@ const formSchema = z.object({
 });
 
 const SignInForm = () => {
+  const [isLoading, setIsLoading] = useState([false, false]);
   const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,38 +51,48 @@ const SignInForm = () => {
   });
 
   async function onSubmit(values: FormValues) {
-    await authClient.signIn.email({
-      email: values.email,
-      password: values.password,
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/");
+    setIsLoading((prev) => [true, prev[1]]);
+    try {
+      await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (error) => {
+            if (error.error.code === "USER_NOT_FOUND") {
+              toast.error("Email não encontrado.");
+              return form.setError("email", {
+                message: "Email não encontrado.",
+              });
+            }
+            if (error.error.code === "INVALID_EMAIL_OR_PASSWORD") {
+              toast.error("Email ou senha inválidos.");
+              form.setError("password", {
+                message: "Email ou senha inválidos.",
+              });
+              return form.setError("email", {
+                message: "Email ou senha inválidos.",
+              });
+            }
+          },
         },
-        onError: (error) => {
-          if (error.error.code === "USER_NOT_FOUND") {
-            toast.error("Email não encontrado.");
-            return form.setError("email", {
-              message: "Email não encontrado.",
-            });
-          }
-          if (error.error.code === "INVALID_EMAIL_OR_PASSWORD") {
-            toast.error("Email ou senha inválidos.");
-            form.setError("password", {
-              message: "Email ou senha inválidos.",
-            });
-            return form.setError("email", {
-              message: "Email ou senha inválidos.",
-            });
-          }
-        },
-      },
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const handleSignInWithGoogle = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-    });
+    setIsLoading((prev) => [prev[0], true]);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
@@ -125,16 +139,27 @@ const SignInForm = () => {
               />
             </CardContent>
             <CardFooter className="flex flex-col gap-2">
-              <Button type="submit" className="w-full">
-                {" "}
+              <Button
+                disabled={isLoading[0]}
+                type="submit"
+                className="w-full cursor-pointer"
+              >
+                {isLoading[0] && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Entrar
               </Button>
               <Button
+                disabled={isLoading[1]}
                 onClick={handleSignInWithGoogle}
                 type="button"
-                className="w-full"
+                variant="outline"
+                className="w-full cursor-pointer"
               >
-                {" "}
+                {isLoading[1] && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                <GoogleIcon />
                 Entrar com Google
               </Button>
             </CardFooter>

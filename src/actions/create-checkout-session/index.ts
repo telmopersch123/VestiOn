@@ -14,6 +14,7 @@ import {
 
 export const createCheckoutSessions = async (
   data: CreateCheckoutSessionsSchema,
+  isCartPurchase: boolean,
 ) => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -55,6 +56,7 @@ export const createCheckoutSessions = async (
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
     metadata: {
       orderId,
+      isCartPurchase: isCartPurchase ? "true" : "false",
     },
     line_items: orderItems.map((item) => {
       return {

@@ -5,7 +5,7 @@ import { getUseCartQueryKey } from "../queries/use-card";
 
 export const getFinishOrdersMutationKey = () => ["finish-orders"] as const;
 
-export function useFinishOrder() {
+export function useFinishOrderMutate() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getFinishOrdersMutationKey(),

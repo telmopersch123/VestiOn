@@ -13,7 +13,7 @@ const MyOrdersPage = async () => {
   });
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("authentication");
   }
   const orders = await db.query.orderTable.findMany({
     where: eq(orderTable.userId, session.user.id),

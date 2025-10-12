@@ -14,7 +14,7 @@ const CategorySelector = ({ categories }: CategorySelectorProps) => {
           <Link key={category.id} href={`/category/${category.slug}`}>
             <Button
               variant="default"
-              className="w-full cursor-pointer rounded-full bg-white text-xs font-semibold text-black/70 hover:bg-pink-200"
+              className="hover:bg-primary/20 w-full cursor-pointer rounded-[10px] bg-white text-xs font-semibold text-black/70"
             >
               {category.name}
             </Button>

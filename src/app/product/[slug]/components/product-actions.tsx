@@ -4,13 +4,19 @@ import { Button } from "@/components/ui/button";
 import AddToCardButton from "./add-to-cart";
 
 import { MinusIcon, PlusIcon } from "lucide-react";
+
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface ProductActionsProps {
   productVariantId: string;
 }
 
 const ProductActions = ({ productVariantId }: ProductActionsProps) => {
+  const router = useRouter();
+  const session = authClient.useSession().data;
   const [quantity, setQuantity] = useState(1);
 
   const handleMais = () => {
@@ -20,6 +26,18 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
   const handleMenos = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   };
+
+  const handleBuyNow = () => {
+    if (!session?.user) {
+      toast.error("Você precisa estar logado para comprar.");
+      router.push("/authentication"); // redireciona para login
+      return;
+    }
+    router.push(
+      `/cart/identification?productVariantId=${productVariantId}&quantity=${quantity}`,
+    );
+  };
+
   return (
     <>
       <div className="px-5">
@@ -51,7 +69,11 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
           productVariantId={productVariantId}
           quantity={quantity}
         />
-        <Button size="lg" className="cursor-pointer rounded-full">
+        <Button
+          onClick={handleBuyNow}
+          size="lg"
+          className="cursor-pointer rounded-full"
+        >
           Comprar agora
         </Button>
       </div>
