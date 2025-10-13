@@ -9,7 +9,6 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import ProductActions from "./components/product-actions";
-import VariantsContainer from "./components/variants";
 
 interface ProductsVariantsPage {
   params: Promise<{ slug: string }>;
@@ -35,41 +34,55 @@ const ProductsVariantsPage = async ({ params }: ProductsVariantsPage) => {
   return (
     <>
       <Header />
-      <div className="flex flex-col space-y-6">
-        <Image
-          src={productVariant.imageUrl}
-          alt={productVariant.product.name}
-          sizes="100vw"
-          width={0}
-          height={0}
-          className="h-auto w-full rounded-3xl object-cover"
+      <main className="space-y-8 px-5 py-4 sm:py-6 lg:px-20 lg:py-8">
+        {/* Container principal: imagem + info */}
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-4">
+          {/* Imagem do produto */}
+          <div className="m-auto">
+            <Image
+              src={productVariant.imageUrl}
+              alt={productVariant.product.name}
+              width={1000}
+              height={1000}
+              className="h-auto w-[650px] rounded-2xl object-cover"
+            />
+          </div>
+
+          {/* Informações e ações */}
+          <div className="flex flex-1 flex-col justify-between gap-6 lg:gap-0">
+            {/* Nome e preço */}
+            <div className="space-y-1 px-5">
+              <h1 className="text-lg font-semibold text-gray-900 sm:text-xl lg:text-2xl">
+                {productVariant.product.name}
+              </h1>
+              <h2 className="text-sm text-gray-500 sm:text-base">
+                {productVariant.name}
+              </h2>
+              <p className="text-lg font-semibold text-gray-900 sm:text-xl lg:text-2xl">
+                {formatCentsToBRL(productVariant.priceInCents)}
+              </p>
+            </div>
+
+            {/* Ações */}
+            <ProductActions productVariant={productVariant} />
+
+            {/* Descrição */}
+            {productVariant.product.description && (
+              <p className="mt-2 text-sm text-gray-500 sm:text-base">
+                {productVariant.product.description}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Produtos relacionados */}
+        <ProductList
+          height={82}
+          title="Talvez você goste"
+          products={likelyProducts}
         />
-        <div className="px-5">
-          <VariantsContainer
-            variants={productVariant.product.variants}
-            selectedVariantSlug={productVariant.slug}
-          />
-        </div>
-        <div className="px-5">
-          <h2 className="text-lg font-semibold">
-            {productVariant.product.name}
-          </h2>
-          <h3 className="text-muted-foreground text-sm">
-            {productVariant.name}
-          </h3>
-          <h3 className="text-lg font-semibold">
-            {formatCentsToBRL(productVariant.priceInCents)}
-          </h3>
-        </div>
-        <ProductActions productVariantId={productVariant.id} />
-        <div className="px-5">
-          <p className="text-muted-foreground text-sm">
-            {productVariant.product.description}
-          </p>
-        </div>
-        <ProductList title="Talvez você goste" products={likelyProducts} />
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </>
   );
 };

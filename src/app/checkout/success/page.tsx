@@ -31,7 +31,7 @@ const Success = () => {
             Seu pedido foi efetuado com sucesso. Você pode acompanhar o status
             na seção de "Meus Pedidos".
           </DialogDescription>
-          <DialogFooter>
+          <DialogFooter className="m-auto gap-2">
             <Button className="cursor-pointer rounded-full" asChild size="lg">
               <Link href="/my-orders"> Ver meus pedidos</Link>
             </Button>

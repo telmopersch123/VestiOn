@@ -23,9 +23,9 @@ const ProductItem = ({ product, textContainerClassName }: ProductListProps) => {
         src={firstVariant.imageUrl || "/logo.png"}
         alt={product.name}
         sizes="100vw"
-        width={0}
-        height={0}
-        className="h-auto w-full rounded-3xl"
+        width={400}
+        height={400}
+        className="m-auto h-auto w-[200px] rounded-3xl"
       />
       <div
         className={cn(
