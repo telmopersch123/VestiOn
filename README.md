@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌟 VestiOn - Ecommerce de Moda
 
-## Getting Started
+[![Website](https://img.shields.io/badge/Website-Online-brightgreen)](https://vesti-on.vercel.app/)  
+[![Next.js](https://img.shields.io/badge/Framework-Next.js-blue)](https://nextjs.org/)  
+[![TailwindCSS](https://img.shields.io/badge/Style-TailwindCSS-teal)](https://tailwindcss.com/)  
+[![Drizzle](https://img.shields.io/badge/ORM-Drizzle-orange)](https://orm.drizzle.team/)  
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blueviolet)](https://www.postgresql.org/)  
+[![Stripe](https://img.shields.io/badge/Payment-Stripe-purple)](https://stripe.com/)  
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 💻 Sobre o Projeto
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**VestiOn** é um ecommerce de moda moderno, rápido e seguro, construído com **Next.js**. A aplicação permite aos usuários explorar produtos, adicionar ao carrinho, realizar compras via **Stripe** e fazer login usando **Google Authentication**.  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O projeto utiliza um stack completo de tecnologias modernas para garantir performance, escalabilidade e experiência de usuário impecável.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠 Tecnologias Utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js** – Framework React para SSR e SSG  
+- **Drizzle ORM** – Integração com **PostgreSQL**  
+- **TailwindCSS** – Estilização moderna e responsiva  
+- **ShadCN UI** – Componentes prontos e estilizados  
+- **Zod** – Validação de formulários e dados  
+- **Lucide-react** – Ícones modernos  
+- **ESLint** – Padronização e validação de código  
+- **Google Authentication** – Login seguro via Google  
+- **Stripe** – Pagamentos online seguros
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Funcionalidades
 
-## Deploy on Vercel
+- Navegação intuitiva entre categorias e produtos  
+- Carrinho de compras dinâmico  
+- Pagamentos seguros via **Stripe**  
+- Login via **Google Authentication**  
+- Validações de formulários com **Zod**  
+- Interface responsiva e moderna  
+- Componentes reutilizáveis com **ShadCN UI**  
+- Feedback visual interativo com ícones **Lucide-react**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contribuindo
+
+Quer fazer parte do **VestiOn**? Adoraríamos receber contribuições! 🚀 
+
+
