@@ -1,4 +1,8 @@
 "use client";
+import { Loader2, ShoppingBasketIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+
 import {
   Sheet,
   SheetContent,
@@ -6,13 +10,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Loader2, ShoppingBasketIcon } from "lucide-react";
-import { Button } from "../ui/button";
-
 import { formatCentsToBRL } from "@/helpers/money";
 import { useCart } from "@/hooks/queries/use-card";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+
+import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import CartItem from "./cart-item";

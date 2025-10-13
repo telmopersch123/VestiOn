@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
+import { z } from "zod";
 
+import { addressSchema } from "@/actions/address-cart/schema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,11 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import { addressSchema } from "@/actions/address-cart/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-Create-Shipping-Address";
-
-import { z } from "zod";
 
 type AddressFormData = z.infer<typeof addressSchema>;
 type AddressFormProps = {
@@ -52,7 +50,7 @@ export default function AddNewAddressForm({ onSuccess }: AddressFormProps) {
         form.reset();
         if (res?.id && onSuccess) onSuccess(res.id); // invalida a query de endereços
       },
-      onError: (err: any) => {
+      onError: (err) => {
         toast.error(err?.message || "Erro ao salvar endereço");
       },
     });

@@ -1,6 +1,7 @@
+import { desc } from "drizzle-orm";
+
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
-import { desc } from "drizzle-orm";
 
 // interface Product {
 //   id: string;

@@ -1,6 +1,7 @@
-import { productVariantTable } from "@/db/schema";
 import Image from "next/image";
 import Link from "next/link";
+
+import { productVariantTable } from "@/db/schema";
 
 interface VariantsProps {
   selectedVariantSlug?: string;

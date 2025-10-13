@@ -1,29 +1,30 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
-import AddressForm from "./form-adresses";
-
-import { Button } from "@/components/ui/button";
+import { shippingAddressTable } from "@/db/schema";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-Update-Cart-Shipping-Address";
 import { getUseCartQueryKey } from "@/hooks/queries/use-card";
 import {
   getUserAddressesKey,
   useUserShippingAddresses,
 } from "@/hooks/queries/use-User-Shipping-Addresses";
-import { useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { formatAddress } from "../../helpers/addresses";
+import AddressForm from "./form-adresses";
 
 interface AddressProp {
   quantity: number | undefined;
   productVariantId: string | undefined;
-  shippingAddresses: any[];
+  shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
 }
 
 const Addresses = ({
@@ -63,7 +64,7 @@ const Addresses = ({
 
             queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
           },
-          onError: (err: any) => {
+          onError: (err) => {
             toast.error(
               err?.message || "Erro ao atualizar endereço do carrinho",
             );
@@ -86,7 +87,7 @@ const Addresses = ({
           queryClient.invalidateQueries({ queryKey: getUserAddressesKey() });
           queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
         },
-        onError: (err: any) => {
+        onError: (err) => {
           toast.error(
             err?.message || "Erro ao vincular o endereço ao carrinho",
           );

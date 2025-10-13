@@ -1,4 +1,7 @@
 "use server";
+import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+
 import { db } from "@/db";
 import {
   orderItemTable,
@@ -7,15 +10,13 @@ import {
   shippingAddressTable,
 } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
 interface FinishOrderNowParams {
   productVariantId: string | undefined;
   quantity: number | undefined;
 }
 
-const useFinishOrderNow = async ({
+const finishOrderNow = async ({
   productVariantId,
   quantity,
 }: FinishOrderNowParams) => {
@@ -85,4 +86,4 @@ const useFinishOrderNow = async ({
   return { orderId };
 };
 
-export default useFinishOrderNow;
+export default finishOrderNow;

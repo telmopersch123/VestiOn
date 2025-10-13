@@ -1,4 +1,12 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,13 +26,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
 type FormValues = z.infer<typeof formSchema>;
 
 const formSchema = z
@@ -70,7 +71,7 @@ const SignUpForm = () => {
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
     try {
-      const { data, error } = await authClient.signUp.email({
+      await authClient.signUp.email({
         name: values.name,
         email: values.email,
         password: values.password,

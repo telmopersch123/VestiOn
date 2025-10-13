@@ -1,9 +1,9 @@
 "use server";
+import { headers } from "next/headers";
+
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-
-import { headers } from "next/headers";
 
 const getCart = async () => {
   const session = await auth.api.getSession({

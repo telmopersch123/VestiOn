@@ -1,6 +1,7 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { categoryTable } from "@/db/schema";
-import Link from "next/link";
 
 interface CategorySelectorProps {
   categories: (typeof categoryTable.$inferSelect)[];

@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import AddToCardButton from "./add-to-cart";
-
 import { MinusIcon, PlusIcon } from "lucide-react";
-
-import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+
+import AddToCardButton from "./add-to-cart";
 import VariantsContainer from "./variants";
 
 interface ProductActionsProps {
@@ -62,7 +62,7 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
       localStorage.removeItem("quantity");
       setQuantity(1);
     }
-  }, []);
+  }, [productVariant.product.categoryId]);
 
   const handleMais = () => {
     setQuantity((prev) => {

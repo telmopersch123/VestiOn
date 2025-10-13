@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import React, { useLayoutEffect, useState } from "react";
+
 import Loading from "./loading";
 
 export default function ClientLoaderWrapper({

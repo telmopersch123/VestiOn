@@ -1,9 +1,11 @@
+import Image from "next/image";
+
 import { getCategories } from "@/data/categories/get";
 import {
   getCategoriesWithProducts,
   getProductsWithVariants,
 } from "@/data/products/get-product";
-import Image from "next/image";
+
 import CategorySelector from "../components/common/category-selector";
 import Footer from "../components/common/footer";
 import Header from "../components/common/header";

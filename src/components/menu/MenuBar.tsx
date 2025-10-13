@@ -1,8 +1,10 @@
-import { authClient } from "@/lib/auth-client";
 import { Loader2, LogInIcon, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { authClient } from "@/lib/auth-client";
+
 import Loading from "../common/loading";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";

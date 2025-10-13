@@ -1,15 +1,16 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import Stripe from "stripe";
 
 import { db } from "@/db";
 import { orderItemTable, orderTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import Stripe from "stripe";
+import { auth } from "@/lib/auth";
+
 import {
-  CreateCheckoutSessionsSchema,
   createCheckoutSessionSchema,
+  CreateCheckoutSessionsSchema,
 } from "./schema";
 
 export const createCheckoutSessions = async (

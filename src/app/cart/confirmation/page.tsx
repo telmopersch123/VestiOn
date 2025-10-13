@@ -1,22 +1,24 @@
+import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { productVariantTable, shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+
 import CartSummary from "../components/cart-summary";
 import { formatAddress } from "../helpers/addresses";
 import {
   CartType,
-  IdentificationPageProps,
+  PagePropsSearchParams,
   TempCartItem,
 } from "../identification/page";
 import { FinishOrderButton } from "./components/finish-order-button";
 
-const ConfirmationPage = async ({ searchParams }: IdentificationPageProps) => {
+const ConfirmationPage = async ({ searchParams }: PagePropsSearchParams) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -24,9 +26,12 @@ const ConfirmationPage = async ({ searchParams }: IdentificationPageProps) => {
     redirect("authentication");
   }
 
-  const params = await searchParams;
-  const productVariantId = params.productVariantId;
-  const quantity = Number(params.quantity);
+  const params = (await searchParams) ?? {};
+
+  const productVariantId = Array.isArray(params.productVariantId)
+    ? params.productVariantId[0]
+    : params.productVariantId;
+  const quantity = params.quantity ? Number(params.quantity) : undefined;
   let cartItems: TempCartItem[] = [];
   let cart: CartType | null | undefined = null;
   let shippingAddressNow:
@@ -62,7 +67,7 @@ const ConfirmationPage = async ({ searchParams }: IdentificationPageProps) => {
         priceInCents: productVariant.priceInCents,
         imageUrl: productVariant.imageUrl,
       },
-      quantity,
+      quantity: quantity ?? 1,
     });
   } else {
     cart = await db.query.cartTable.findFirst({

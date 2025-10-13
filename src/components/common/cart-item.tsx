@@ -1,10 +1,12 @@
+import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import Image from "next/image";
+import { toast } from "sonner";
+
 import { formatCentsToBRL } from "@/helpers/money";
 import { useDecreaseProductFromCart } from "@/hooks/mutations/use-decrease-product-from-cart";
 import { useIncreaseProductFromCart } from "@/hooks/mutations/use-increase-product-from-cart";
 import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
-import { MinusIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import Image from "next/image";
-import { toast } from "sonner";
+
 import { Button } from "../ui/button";
 
 interface CartItemProps {

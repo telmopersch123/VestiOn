@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import {
   Accordion,
   AccordionContent,
@@ -72,7 +74,7 @@ const Orders = ({ orders }: OrdersProps) => {
                   className="col-span-1 flex flex-col gap-4 md:col-span-5 md:flex-row md:items-center"
                 >
                   {/* Imagem */}
-                  <img
+                  <Image
                     src={item.imageUrl}
                     alt={item.productName}
                     className="h-16 w-16 rounded object-cover"

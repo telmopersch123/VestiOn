@@ -1,7 +1,9 @@
 "use client";
-import { productTable, productVariantTable } from "@/db/schema";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { useRef } from "react";
+
+import { productTable, productVariantTable } from "@/db/schema";
+
 import ProductItem from "./product-item";
 
 interface ProductListProps {

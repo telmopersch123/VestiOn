@@ -1,13 +1,12 @@
 "use client";
-import { addProductToCart } from "@/actions/add-cart-product";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { toast } from "sonner";
+
+import { addProductToCart } from "@/actions/add-cart-product";
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 const AddToCardButton = ({
   productVariantId,

@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import useFinishOrderNow from "@/actions/finish-order-now";
+import finishOrderNow from "@/actions/finish-order-now";
 import { FinishOrderNowParams } from "@/app/cart/confirmation/components/finish-order-button";
+
 import { getUseCartQueryKey } from "../queries/use-card";
 
 export const getFinishOrdersNowMutationKey = () =>
@@ -15,7 +16,7 @@ export function useFinishOrderNowMutate({
   return useMutation({
     mutationKey: getFinishOrdersNowMutationKey(),
     mutationFn: async () => {
-      return await useFinishOrderNow({ quantity, productVariantId });
+      return await finishOrderNow({ quantity, productVariantId });
     },
     onSuccess: () => {
       // Invalida queries relacionadas ao carrinho, se houver

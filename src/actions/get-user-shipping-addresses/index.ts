@@ -1,10 +1,11 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth"; // ou next-auth / clerk, ajuste conforme seu setup
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
 export async function getUserShippingAddresses() {
   const session = await auth.api.getSession({

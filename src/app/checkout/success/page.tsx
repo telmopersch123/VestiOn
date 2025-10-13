@@ -1,4 +1,7 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
+
 import Header from "@/components/common/header";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,8 +11,6 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Image from "next/image";
-import Link from "next/link";
 const Success = () => {
   return (
     <>
@@ -29,7 +30,7 @@ const Success = () => {
           </DialogTitle>
           <DialogDescription>
             Seu pedido foi efetuado com sucesso. Você pode acompanhar o status
-            na seção de "Meus Pedidos".
+            na seção de &quot;Meus Pedidos&quot;.
           </DialogDescription>
           <DialogFooter className="m-auto gap-2">
             <Button className="cursor-pointer rounded-full" asChild size="lg">
