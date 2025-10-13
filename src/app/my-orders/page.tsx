@@ -34,7 +34,16 @@ const MyOrdersPage = async () => {
   return (
     <>
       <Header />
-      <div className="px-5">
+
+      {orders.length === 0 && (
+        <div className="relative min-h-[calc(100vh-100px)] p-4 px-5 text-2xl">
+          <h2 className="text-muted-foreground absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform font-bold sm:text-3xl">
+            Nenhuma compra realizada
+          </h2>
+        </div>
+      )}
+
+      <div className="relative px-5">
         <Orders
           orders={orders.map((order) => ({
             id: order.id,

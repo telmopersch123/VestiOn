@@ -48,19 +48,20 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    const storedQuantity = localStorage.getItem("quantity");
-    const storedCategory = localStorage.getItem("category");
-    const currentCategory = String(productVariant.product.categoryId);
-
-    if (storedCategory && storedCategory !== currentCategory) {
-      localStorage.setItem("category", currentCategory);
-      localStorage.removeItem("quantity");
-      setQuantity(1);
-    } else if (storedQuantity && storedCategory === currentCategory) {
-      setQuantity(Number(storedQuantity));
-    } else {
-      localStorage.removeItem("quantity");
-      setQuantity(1);
+    if (typeof window !== "undefined") {
+      const storedQuantity = localStorage.getItem("quantity");
+      const storedCategory = localStorage.getItem("category");
+      const currentCategory = String(productVariant.product.categoryId);
+      if (storedCategory && storedCategory !== currentCategory) {
+        localStorage.setItem("category", currentCategory);
+        localStorage.removeItem("quantity");
+        setQuantity(1);
+      } else if (storedQuantity && storedCategory === currentCategory) {
+        setQuantity(Number(storedQuantity));
+      } else {
+        localStorage.removeItem("quantity");
+        setQuantity(1);
+      }
     }
   }, [productVariant.product.categoryId]);
 
@@ -95,36 +96,26 @@ const ProductActions = ({ productVariant }: ProductActionsProps) => {
     <>
       <div className="flex flex-col space-y-4">
         <div className="mt-20 flex flex-col space-y-4 px-5">
-          <div>
-            <div className="space-x-4">
-              <h3 className="font-medium">Quantidade</h3>
-              <div className="flex w-[100px] flex-row items-center justify-between rounded-lg border">
-                <Button
-                  className="cursor-pointer"
-                  size="icon"
-                  variant="outline"
-                  onClick={handleMenos}
-                >
-                  <MinusIcon />
-                </Button>
-                <p>{quantity}</p>
-                <Button
-                  className="cursor-pointer"
-                  size="icon"
-                  variant="outline"
-                  onClick={handleMais}
-                >
-                  <PlusIcon />
-                </Button>
-              </div>
+          <div className="space-x-4">
+            <h3 className="font-medium">Quantidade</h3>
+            <div className="flex w-[100px] flex-row items-center justify-between rounded-lg border">
+              <Button size="icon" variant="outline" onClick={handleMenos}>
+                <MinusIcon />
+              </Button>
+              <p>{quantity}</p>
+              <Button size="icon" variant="outline" onClick={handleMais}>
+                <PlusIcon />
+              </Button>
             </div>
           </div>
+
           {/* Variantes */}
           <VariantsContainer
             variants={productVariant.product.variants}
             selectedVariantSlug={productVariant.slug}
           />
         </div>
+
         <div className="flex flex-col space-y-4 px-5">
           <AddToCardButton
             productVariantId={productVariant.id}
