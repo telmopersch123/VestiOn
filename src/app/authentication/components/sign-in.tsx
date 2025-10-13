@@ -63,6 +63,7 @@ const SignInForm = () => {
             router.push("/");
           },
           onError: (error) => {
+            setIsLoading((prev) => [false, prev[1]]);
             if (error.error.code === "USER_NOT_FOUND") {
               toast.error("Email não encontrado.");
               return form.setError("email", {
@@ -93,6 +94,7 @@ const SignInForm = () => {
         provider: "google",
       });
     } catch (error) {
+      setIsLoading((prev) => [prev[0], false]);
       console.log(error);
     }
   };

@@ -80,7 +80,11 @@ const SignUpForm = () => {
             router.push("/");
           },
           onError: (error) => {
-            if (error.error.code === "USER_ALREADY_EXISTS") {
+            setIsLoading(false);
+            if (
+              error.error.code === "USER_ALREADY_EXISTS" ||
+              error.error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+            ) {
               toast.error("Email ou senha inválidos.");
               return form.setError("email", {
                 type: "manual",

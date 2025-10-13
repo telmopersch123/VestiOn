@@ -38,8 +38,8 @@ const Cart = () => {
 
         <div className="flex h-full flex-col px-5 pb-5">
           <div className="h-full max-h-full flex-col overflow-hidden">
-            <ScrollArea className="h-full">
-              <div className="flex h-full flex-col gap-8">
+            <ScrollArea className="h-[calc(100vh-350px)]">
+              <div className="flex h-full flex-col gap-12">
                 {cart?.items && cart?.items?.length > 0 ? (
                   cart.items.map((item) => (
                     <CartItem
@@ -57,7 +57,7 @@ const Cart = () => {
                   ))
                 ) : (
                   <div className="text-muted-foreground absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center font-semibold">
-                    Seu sacola está vazia
+                    Sua sacola está vazia
                   </div>
                 )}
               </div>
